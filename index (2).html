@@ -1,0 +1,1287 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fanmade Communities com Chat</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background: #121212; color: #fff; padding: 20px; max-width: 1050px; margin: 0 auto; }
+    
+    header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 20px; border-bottom: 1px solid #333; margin-bottom: 20px; flex-wrap: wrap; gap: 15px; }
+    .user-info { display: flex; align-items: center; gap: 12px; }
+    
+    .user-profile-badge { display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 5px 10px; border-radius: 20px; transition: background 0.2s; }
+    .user-profile-badge:hover { background: #2a2a2a; }
+    img.avatar-header { width: 36px !important; height: 36px !important; min-width: 36px; min-height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid #ff9800; background: #333; display: block; }
+    
+    .admin-badge { background: #ff4757; color: white; font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: bold; margin-left: 4px; display: inline-block; text-transform: uppercase; }
+
+    .card { background: #1e1e1e; padding: 20px; border-radius: 8px; margin-bottom: 25px; border: 1px solid #333; }
+    input[type="file"] { display: none; }
+    input[type="text"], input[type="password"], textarea, select { width: 100%; padding: 10px; margin: 8px 0; border-radius: 4px; border: 1px solid #444; background: #2a2a2a; color: #fff; }
+    textarea { resize: vertical; min-height: 70px; }
+    
+    .btn { background: #ff9800; color: #000; padding: 8px 16px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; display: inline-block; text-align: center; }
+    .btn:hover { background: #e68a00; }
+    .btn-secondary { background: #007bff; color: #fff; }
+    .btn-secondary:hover { background: #0056b3; }
+    .btn-danger { background: #dc3545; color: #fff; }
+    .btn-danger:hover { background: #bd2130; }
+    .btn-upload { background: #28a745; color: #fff; margin-bottom: 10px; }
+    .btn-upload:hover { background: #218838; }
+
+    .avatar-preview-box { display: flex; align-items: center; justify-content: center; gap: 15px; margin: 10px 0; }
+    img.avatar-preview { width: 60px !important; height: 60px !important; min-width: 60px; min-height: 60px; border-radius: 50%; object-fit: cover; background: #333; border: 2px solid #555; display: block; }
+    
+    .communities-nav { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 20px; border-bottom: 1px solid #333; }
+    .community-tab { background: #1e1e1e; border: 1px solid #444; padding: 8px 16px; border-radius: 20px; cursor: pointer; white-space: nowrap; font-size: 14px; font-weight: bold; transition: all 0.2s; display: flex; align-items: center; gap: 6px; }
+    .community-tab:hover { background: #2a2a2a; border-color: #ff9800; }
+    .community-tab.active { background: #ff9800; color: #000; border-color: #ff9800; }
+
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 18px; }
+    .post-card { background: #1e1e1e; border-radius: 8px; overflow: hidden; border: 1px solid #333; cursor: pointer; transition: transform 0.2s; display: flex; flex-direction: column; position: relative; }
+    .post-card:hover { transform: scale(1.02); }
+    
+    .post-card img, .post-card video { width: 100%; height: 200px !important; max-height: 200px !important; object-fit: cover; display: block; background: #000; }
+    
+    .post-meta { padding: 12px; font-size: 13px; color: #aaa; text-align: left; display: flex; flex-direction: column; gap: 6px; flex: 1; }
+    .post-author-box { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; justify-content: space-between; }
+    .author-info-left { display: flex; align-items: center; gap: 8px; }
+    img.post-author-avatar { width: 25px !important; height: 25px !important; min-width: 25px; min-height: 25px; border-radius: 50%; object-fit: cover; display: block; }
+    .post-title { font-size: 16px; font-weight: bold; color: #fff; margin-top: 4px; }
+    .post-desc { font-size: 13px; color: #ccc; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+    .post-link { color: #00a2ff; text-decoration: none; word-break: break-all; font-size: 12px; }
+    .post-link:hover { text-decoration: underline; }
+    
+    .group-badge { background: #333; color: #ff9800; font-size: 11px; padding: 3px 8px; border-radius: 12px; display: inline-block; font-weight: bold; width: fit-content; margin-bottom: 4px; border: 1px solid #ff980033; }
+
+    .msg { margin-top: 10px; font-weight: bold; font-size: 14px; text-align: center; }
+
+    /* Estilo do Chat integrado */
+    .chat-container { display: flex; flex-direction: column; height: 450px; background: #1a1a1a; border-radius: 8px; border: 1px solid #333; overflow: hidden; }
+    .chat-messages { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 10px; }
+    .chat-input-area { padding: 10px; background: #222; display: flex; gap: 10px; border-top: 1px solid #333; }
+    .chat-msg { background: #2a2a2a; padding: 10px 14px; border-radius: 12px; max-width: 75%; align-self: flex-start; font-size: 14px; color: #fff; border: 1px solid #444; }
+    .chat-msg.me { background: #ff9800; color: #000; align-self: flex-end; border-color: #e68a00; }
+    .chat-msg-header { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
+    img.chat-msg-avatar { width: 20px !important; height: 20px !important; min-width: 20px; min-height: 20px; border-radius: 50%; object-fit: cover; }
+
+    .modal { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.85); z-index: 1000; justify-content: center; align-items: center; }
+    .modal-content { background: #1e1e1e; border-radius: 8px; max-width: 850px; width: 90%; max-height: 90vh; display: flex; flex-direction: row; overflow: hidden; border: 1px solid #444; }
+    @media (max-width: 650px) { .modal-content { flex-direction: column; overflow-y: auto; } }
+    
+    .modal-media { flex: 1.2; background: #000; display: flex; justify-content: center; align-items: center; max-height: 70vh; }
+    .modal-media img, .modal-media video { max-width: 100%; max-height: 70vh; object-fit: contain; }
+    
+    .modal-details { flex: 1; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; background: #181818; }
+    .modal-author-info { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+    img.modal-avatar { width: 40px !important; height: 40px !important; min-width: 40px; min-height: 40px; border-radius: 50%; object-fit: cover; display: block; }
+    
+    .comments-list { flex: 1; overflow-y: auto; max-height: 200px; margin: 15px 0; border-top: 1px solid #333; border-bottom: 1px solid #333; padding: 10px 0; }
+    .comment-item { font-size: 13px; margin-bottom: 8px; line-height: 1.4; display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+    img.comment-avatar { width: 22px !important; height: 22px !important; min-width: 22px; min-height: 22px; border-radius: 50%; object-fit: cover; display: block; }
+
+    .modal-box { background: #1e1e1e; border-radius: 8px; max-width: 480px; width: 90%; padding: 25px; border: 1px solid #444; text-align: center; }
+    .bio-text { font-size: 12px; color: #aaa; margin-top: -2px; font-style: italic; }
+
+    .tabs { display: flex; gap: 10px; margin-bottom: 15px; }
+    .tab { padding: 8px 16px; background: #2a2a2a; border-radius: 5px; cursor: pointer; font-size: 14px; font-weight: bold; }
+    .tab.active { background: #ff9800; color: #000; }
+
+    .admin-panel-box { border: 2px dashed #ff4757; background: #1a1515; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h2>🔥 Fanmade Communities</h2>
+    <div id="auth-header" class="user-info">Carregando...</div>
+  </header>
+
+  <!-- PAINEL DE AUTH -->
+  <div id="auth-panel" class="card" style="text-align: center;">
+    <h3 id="auth-title">Entrar no Fanmade Communities</h3>
+    
+    <div id="avatar-field" style="display: none;">
+      <div class="avatar-preview-box">
+        <img id="avatar-preview-img" class="avatar-preview" src="https://via.placeholder.com/60/333333/FFFFFF?text=Perfil" alt="Preview">
+        <label class="btn btn-upload" for="avatarInput">Escolher Foto de Perfil</label>
+        <input type="file" id="avatarInput" accept="image/*" onchange="carregarPreviewAvatar(event, 'avatar-preview-img', 'tempRegister')">
+      </div>
+      <textarea id="reg-bio" placeholder="Escreva uma breve bio/descrição..."></textarea>
+    </div>
+
+    <input type="text" id="username" placeholder="Seu Usuário (@nickname)...">
+    <input type="password" id="password" placeholder="Sua Senha...">
+    <input type="password" id="reg-recovery-code" placeholder="Defina sua Senha Única (para recuperação)..." style="display: none;">
+    <br><br>
+    <button class="btn" id="btn-submit" onclick="handleAuth()">Entrar</button>
+    <div style="margin-top: 12px; font-size: 13px; color: #aaa;">
+      <span id="auth-link-text">Não tem conta?</span> 
+      <a href="javascript:void(0)" onclick="toggleAuthMode()" id="auth-link" style="color:#ff9800">Cadastre-se</a>
+      <div id="forgot-link-box" style="margin-top: 8px;">
+        <a href="javascript:void(0)" onclick="abrirModalRecuperacao()" style="color:#aaa; font-size:12px;">Esqueci minha senha</a>
+      </div>
+    </div>
+    <div id="auth-msg" class="msg"></div>
+  </div>
+
+  <!-- PAINEL PRINCIPAL DO USUÁRIO LOGADO -->
+  <div id="upload-panel" class="card" style="display: none;">
+    <div id="admin-tools-container" style="display: none;"></div>
+
+    <div class="tabs">
+      <div class="tab active" id="tab-post" onclick="mudarAbaPainel('post')">📸 / 🎥 Criar Publicação</div>
+      <div class="tab" id="tab-grupo" onclick="mudarAbaPainel('grupo')">👥 Criar Comunidade</div>
+    </div>
+
+    <!-- FORMULARIO DE POST -->
+    <div id="form-post">
+      <p style="color: #aaa; margin-bottom: 12px; font-size: 13px;">Selecione uma imagem ou vídeo para publicar:</p>
+
+      <select id="post-group-select">
+        <option value="">Feed Geral</option>
+      </select>
+
+      <label class="btn btn-upload" for="mediaInput" id="label-media">1. Selecionar Imagem ou Vídeo</label>
+      <input type="file" id="mediaInput" accept="image/*,video/*" onchange="validarSelecaoMidia(event)">
+      <span id="media-nome-status" style="font-size: 13px; color: #28a745; margin-left: 10px;"></span>
+
+      <input type="text" id="post-title" placeholder="Título da Publicação...">
+      <textarea id="post-desc" placeholder="Escreva uma legenda / descrição..."></textarea>
+      <input type="text" id="post-link" placeholder="Link relacionado (ex: https://site.com)...">
+
+      <button class="btn" onclick="salvarPost()" style="width: 100%; margin-top: 10px;">Publicar na Comunidade</button>
+    </div>
+
+    <!-- FORMULARIO DE CRIAR GRUPO -->
+    <div id="form-grupo" style="display: none;">
+      <p style="color: #aaa; margin-bottom: 12px; font-size: 13px;">Crie uma aba de comunidade para reunir posts e mensagens:</p>
+      
+      <div class="avatar-preview-box">
+        <img id="group-icon-preview" class="avatar-preview" src="https://via.placeholder.com/60/333/FFFFFF?text=Grupo" alt="Ícone Grupo">
+        <label class="btn btn-upload" for="groupIconInput">Ícone da Comunidade</label>
+        <input type="file" id="groupIconInput" accept="image/*" onchange="carregarPreviewGrupo(event)">
+      </div>
+
+      <input type="text" id="group-name" placeholder="Nome da Comunidade (ex: RPG, Arte, Animes)...">
+      <textarea id="group-desc" placeholder="Sobre o que é esta comunidade?"></textarea>
+      
+      <label style="display: flex; align-items: center; gap: 8px; margin: 12px 0; cursor: pointer; font-size: 14px;">
+        <input type="checkbox" id="group-is-private" style="width: auto;"> 🔒 Tornar Comunidade Privada (apenas por convite)
+      </label>
+
+      <button class="btn btn-secondary" onclick="salvarGrupo()" style="width: 100%; margin-top: 10px;">Criar Comunidade</button>
+    </div>
+
+    <div id="action-msg" class="msg"></div>
+  </div>
+
+  <!-- ABAS DE NAVEGAÇÃO DE COMUNIDADES -->
+  <div class="communities-nav" id="communities-nav-bar">
+    <div class="community-tab active" onclick="filtrarComunidade('')">🔥 Feed Geral</div>
+  </div>
+
+  <!-- CABEÇALHO DA COMUNIDADE ATIVA + SELETOR POSTS/CHAT -->
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
+    <h3 id="current-community-title" style="color: #ff9800; margin: 0;">Feed Geral</h3>
+    <div id="view-mode-selector" style="display: flex; gap: 8px;">
+      <button class="btn" id="btn-mode-posts" onclick="alternarModo('posts')">🖼️ Posts</button>
+      <button class="btn btn-secondary" id="btn-mode-chat" onclick="alternarModo('chat')">💬 Chat</button>
+    </div>
+  </div>
+
+  <!-- CONTEÚDO PRINCIPAL (GALERIA DE POSTS OU CHAT) -->
+  <div id="galeria" class="grid"></div>
+
+  <div id="chat-box" class="chat-container" style="display: none;">
+    <div class="chat-messages" id="chat-messages"></div>
+    <div class="chat-input-area">
+      <input type="text" id="chat-input" placeholder="Digite uma mensagem..." onkeypress="if(event.key === 'Enter') enviarMensagemChat()">
+      <button class="btn" onclick="enviarMensagemChat()">Enviar</button>
+    </div>
+  </div>
+
+  <!-- MODAL EDITAR PERFIL -->
+  <div id="modal-perfil" class="modal" onclick="fecharModalPerfil(event)">
+    <div class="modal-box" onclick="event.stopPropagation()">
+      <h3>Editar Perfil</h3>
+      <p style="font-size: 12px; color: #aaa; margin-bottom: 15px;">Altere suas informações públicas:</p>
+
+      <div class="avatar-preview-box">
+        <img id="edit-avatar-preview" class="avatar-preview" src="" alt="Avatar">
+        <label class="btn btn-upload" for="editAvatarInput">Mudar Foto</label>
+        <input type="file" id="editAvatarInput" accept="image/*" onchange="carregarPreviewAvatar(event, 'edit-avatar-preview', 'tempEdit')">
+      </div>
+
+      <input type="text" id="edit-username" placeholder="Novo nome de usuário (@handle)">
+      <textarea id="edit-bio" placeholder="Sua bio / descrição pessoal..."></textarea>
+
+      <div style="display: flex; gap: 10px; margin-top: 15px;">
+        <button class="btn" onclick="salvarPerfil()" style="flex: 1;">Salvar</button>
+        <button class="btn btn-danger" onclick="document.getElementById('modal-perfil').style.display = 'none'" style="flex: 1;">Cancelar</button>
+      </div>
+      <div id="edit-profile-msg" class="msg"></div>
+    </div>
+  </div>
+
+  <!-- MODAL RECUPERAR CONTA -->
+  <div id="modal-recuperacao" class="modal" onclick="fecharModalRecuperacao(event)">
+    <div class="modal-box" onclick="event.stopPropagation()">
+      <h3>Recuperar Conta</h3>
+      <p style="font-size: 12px; color: #aaa; margin-bottom: 15px;">Informe seu usuário e sua Senha Única cadastrada para redefinir sua senha.</p>
+      
+      <input type="text" id="rec-username" placeholder="Seu usuário (@nick)...">
+      <input type="password" id="rec-code" placeholder="Sua Senha Única (Código de Recuperação)...">
+      <hr style="border: 0; border-top: 1px solid #444; margin: 15px 0;">
+      <input type="password" id="rec-new-pass" placeholder="Nova senha de login...">
+
+      <div style="display: flex; gap: 10px; margin-top: 15px;">
+        <button class="btn" onclick="recuperarConta()" style="flex: 1;">Redefinir Senha</button>
+        <button class="btn btn-danger" onclick="document.getElementById('modal-recuperacao').style.display = 'none'" style="flex: 1;">Voltar</button>
+      </div>
+      <div id="rec-msg" class="msg"></div>
+    </div>
+  </div>
+
+  <!-- MODAL EXIBIR POST -->
+  <div id="modal-post" class="modal" onclick="fecharModalPost(event)">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <div class="modal-media" id="modal-media-container"></div>
+      <div class="modal-details">
+        <div>
+          <div id="modal-group-badge"></div>
+          <div class="modal-author-info">
+            <img id="modal-author-avatar" class="modal-avatar" src="" alt="Avatar">
+            <div>
+              <h4 id="modal-author-name">@autor</h4>
+              <p id="modal-author-bio" class="bio-text"></p>
+              <p id="modal-date" style="font-size: 11px; color: #888; margin-top: 2px;"></p>
+            </div>
+          </div>
+          
+          <h3 id="modal-title" style="margin-bottom: 6px; color: #fff;"></h3>
+          <p id="modal-desc" style="font-size: 14px; color: #ccc; margin-bottom: 8px; line-height: 1.4;"></p>
+          <div id="modal-link-box"></div>
+        </div>
+
+        <div class="comments-list" id="modal-comments"></div>
+
+        <div id="comment-form">
+          <input type="text" id="new-comment" placeholder="Escreva um comentário...">
+          <button class="btn" onclick="adicionarComentario()" style="width: 100%; margin-top: 5px;">Comentar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let db = null;
+    let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
+    let isRegisterMode = false;
+    let postSelecionadoId = null;
+    let comunidadeAtiva = ""; 
+    let modoVisualizacao = 'posts'; // 'posts' ou 'chat'
+
+    let tempAvatarBase64 = null;
+    let tempEditAvatarBase64 = null;
+    let tempGroupIconBase64 = null;
+    let tempPostMedia = null;
+
+    const ADMIN_NICK = "roxfoxyt";
+    const DB_NAME = "FanmadeCommunitiesDB_v5";
+    const DB_VERSION = 1;
+
+    function isAdmin() {
+      return currentUser && currentUser.username.toLowerCase() === ADMIN_NICK;
+    }
+
+    function comprimirImagem(file, maxWidth, quality, callback) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const img = new Image();
+        img.onload = function() {
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
+
+          if (width > maxWidth) {
+            height = Math.round((height * maxWidth) / width);
+            width = maxWidth;
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          callback(canvas.toDataURL('image/jpeg', quality));
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    const request = indexedDB.open(DB_NAME, DB_VERSION);
+
+    request.onupgradeneeded = (e) => {
+      let dbInstance = e.target.result;
+      if (!dbInstance.objectStoreNames.contains("usuarios")) {
+        dbInstance.createObjectStore("usuarios", { keyPath: "username" });
+      }
+      if (!dbInstance.objectStoreNames.contains("grupos")) {
+        dbInstance.createObjectStore("grupos", { keyPath: "id", autoIncrement: true });
+      }
+      if (!dbInstance.objectStoreNames.contains("posts")) {
+        dbInstance.createObjectStore("posts", { keyPath: "id", autoIncrement: true });
+      }
+    };
+
+    request.onsuccess = (e) => {
+      db = e.target.result;
+      
+      verificarConviteURL();
+
+      if (currentUser) {
+        const tx = db.transaction(["usuarios"], "readonly");
+        const req = tx.objectStore("usuarios").get(currentUser.username);
+        req.onsuccess = () => {
+          if (req.result) {
+            currentUser = { username: req.result.username, avatar: req.result.avatar, bio: req.result.bio || '' };
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+          }
+          updateUI();
+        };
+      } else {
+        updateUI();
+      }
+
+      carregarAbasComunidades();
+      carregarGruposSelect();
+      carregarPosts();
+    };
+
+    request.onerror = (e) => console.error("Erro IndexedDB:", e.target.error);
+
+    function verificarConviteURL() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const token = urlParams.get('join');
+      if (!token) return;
+
+      const checkInterval = setInterval(() => {
+        if (db) {
+          clearInterval(checkInterval);
+          if (!currentUser) {
+            alert("Você precisa estar logado para aceitar o convite da comunidade privada!");
+            return;
+          }
+
+          const tx = db.transaction(["grupos"], "readwrite");
+          const store = tx.objectStore("grupos");
+          store.openCursor().onsuccess = (e) => {
+            const cursor = e.target.result;
+            if (cursor) {
+              let grupo = cursor.value;
+              if (grupo.inviteToken === token) {
+                if (!grupo.membros) grupo.membros = [grupo.criador];
+                if (!grupo.membros.includes(currentUser.username)) {
+                  grupo.membros.push(currentUser.username);
+                  cursor.update(grupo);
+                  alert(`Você entrou na comunidade privada "${grupo.nome}" com sucesso!`);
+                } else {
+                  alert(`Você já faz parte da comunidade "${grupo.nome}".`);
+                }
+                window.history.replaceState({}, document.title, window.location.pathname);
+                carregarAbasComunidades();
+                carregarPosts();
+              }
+              cursor.continue();
+            }
+          };
+        }
+      }, 100);
+    }
+
+    function updateUI() {
+      const authHeader = document.getElementById('auth-header');
+      const authPanel = document.getElementById('auth-panel');
+      const uploadPanel = document.getElementById('upload-panel');
+      const adminContainer = document.getElementById('admin-tools-container');
+
+      if (currentUser) {
+        const adminBadgeHtml = isAdmin() ? `<span class="admin-badge">ADMIN</span>` : '';
+        authHeader.innerHTML = `
+          <div class="user-profile-badge" onclick="abrirModalPerfil()" title="Clique para editar seu perfil">
+            <img class="avatar-header" src="${currentUser.avatar || 'https://via.placeholder.com/36/333/FFF?text=U'}" alt="Avatar">
+            <div style="text-align: left;">
+              <strong style="display: block; font-size: 14px;">@${currentUser.username} ${adminBadgeHtml}</strong>
+              <small style="color: #ff9800; font-size: 11px;">✏️ Editar perfil</small>
+            </div>
+          </div>
+          <button class="btn btn-danger" onclick="logout()">Sair</button>
+        `;
+        authPanel.style.display = 'none';
+        uploadPanel.style.display = 'block';
+
+        if (isAdmin()) {
+          adminContainer.style.display = 'block';
+          adminContainer.innerHTML = `
+            <div class="admin-panel-box">
+              <h4 style="color: #ff4757; margin-bottom: 8px;">🛡️ Painel de Administração (@roxfoxyt)</h4>
+              <p style="font-size: 12px; color: #aaa; margin-bottom: 10px;">Você possui privilégios globais para moderar comunidades e apagar postagens inadequadas.</p>
+              <button class="btn btn-danger" style="font-size: 12px; padding: 5px 10px;" onclick="adminLimparBanco()">⚠️ Resetar Todos os Dados</button>
+            </div>
+          `;
+        } else {
+          adminContainer.style.display = 'none';
+        }
+      } else {
+        authHeader.innerHTML = `<span>Você está desconectado.</span>`;
+        authPanel.style.display = 'block';
+        uploadPanel.style.display = 'none';
+        adminContainer.style.display = 'none';
+      }
+    }
+
+    function toggleAuthMode() {
+      isRegisterMode = !isRegisterMode;
+      document.getElementById('auth-title').innerText = isRegisterMode ? 'Criar Conta no Fanmade' : 'Entrar no Fanmade Communities';
+      document.getElementById('btn-submit').innerText = isRegisterMode ? 'Cadastrar e Entrar' : 'Entrar';
+      document.getElementById('auth-link-text').innerText = isRegisterMode ? 'Já tem uma conta?' : 'Não tem conta?';
+      document.getElementById('auth-link').innerText = isRegisterMode ? 'Faça Login' : 'Cadastre-se';
+      document.getElementById('avatar-field').style.display = isRegisterMode ? 'block' : 'none';
+      document.getElementById('reg-recovery-code').style.display = isRegisterMode ? 'block' : 'none';
+      document.getElementById('forgot-link-box').style.display = isRegisterMode ? 'none' : 'block';
+      document.getElementById('auth-msg').innerText = '';
+    }
+
+    function mudarAbaPainel(aba) {
+      document.getElementById('tab-post').classList.toggle('active', aba === 'post');
+      document.getElementById('tab-grupo').classList.toggle('active', aba === 'grupo');
+      document.getElementById('form-post').style.display = aba === 'post' ? 'block' : 'none';
+      document.getElementById('form-grupo').style.display = aba === 'grupo' ? 'block' : 'none';
+      document.getElementById('action-msg').innerText = '';
+    }
+
+    function alternarModo(modo) {
+      modoVisualizacao = modo;
+      document.getElementById('btn-mode-posts').className = modo === 'posts' ? 'btn' : 'btn btn-secondary';
+      document.getElementById('btn-mode-chat').className = modo === 'chat' ? 'btn' : 'btn btn-secondary';
+      
+      document.getElementById('galeria').style.display = modo === 'posts' ? 'grid' : 'none';
+      document.getElementById('chat-box').style.display = modo === 'chat' ? 'flex' : 'none';
+
+      if (modo === 'posts') {
+        carregarPosts();
+      } else {
+        if (!comunidadeAtiva) {
+          alert("Selecione uma comunidade específica para abrir o chat de grupo.");
+          alternarModo('posts');
+          return;
+        }
+        carregarMensagensChat();
+      }
+    }
+
+    function carregarPreviewAvatar(e, targetImgId, stateType) {
+      const file = e.target.files[0];
+      if (!file) return;
+      comprimirImagem(file, 200, 0.7, (base64) => {
+        if (stateType === 'tempRegister') tempAvatarBase64 = base64;
+        if (stateType === 'tempEdit') tempEditAvatarBase64 = base64;
+        document.getElementById(targetImgId).src = base64;
+      });
+    }
+
+    function carregarPreviewGrupo(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      comprimirImagem(file, 200, 0.7, (base64) => {
+        tempGroupIconBase64 = base64;
+        document.getElementById('group-icon-preview').src = base64;
+      });
+    }
+
+    function handleAuth() {
+      const u = document.getElementById('username').value.trim().toLowerCase();
+      const p = document.getElementById('password').value.trim();
+      const recCode = document.getElementById('reg-recovery-code').value.trim();
+      const bio = document.getElementById('reg-bio').value.trim();
+      const msg = document.getElementById('auth-msg');
+      msg.innerText = '';
+
+      if (!u || !p) {
+        msg.style.color = '#f44336';
+        msg.innerText = 'Preencha usuário e senha!';
+        return;
+      }
+
+      if (isRegisterMode && !recCode) {
+        msg.style.color = '#f44336';
+        msg.innerText = 'Defina uma Senha Única de recuperação!';
+        return;
+      }
+
+      if (!db) return;
+
+      const tx = db.transaction(["usuarios"], "readwrite");
+      const store = tx.objectStore("usuarios");
+      const req = store.get(u);
+
+      req.onsuccess = () => {
+        const user = req.result;
+
+        if (isRegisterMode) {
+          if (user) {
+            msg.style.color = '#f44336';
+            msg.innerText = 'Este nome de usuário já existe!';
+          } else {
+            const avatarFinal = tempAvatarBase64 || 'https://via.placeholder.com/60/333/FFF?text=' + u.charAt(0).toUpperCase();
+            const novoUsuario = { username: u, password: p, recoveryCode: recCode, avatar: avatarFinal, bio: bio };
+            
+            store.add(novoUsuario).onsuccess = () => {
+              currentUser = { username: u, avatar: avatarFinal, bio: bio };
+              localStorage.setItem('currentUser', JSON.stringify(currentUser));
+              document.getElementById('username').value = '';
+              document.getElementById('password').value = '';
+              document.getElementById('reg-recovery-code').value = '';
+              tempAvatarBase64 = null;
+              updateUI();
+            };
+          }
+        } else {
+          if (user && user.password === p) {
+            currentUser = { username: user.username, avatar: user.avatar, bio: user.bio || '' };
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+            updateUI();
+          } else {
+            msg.style.color = '#f44336';
+            msg.innerText = 'Usuário ou senha incorretos!';
+          }
+        }
+      };
+    }
+
+    function abrirModalRecuperacao() {
+      document.getElementById('rec-username').value = '';
+      document.getElementById('rec-code').value = '';
+      document.getElementById('rec-new-pass').value = '';
+      document.getElementById('rec-msg').innerText = '';
+      document.getElementById('modal-recuperacao').style.display = 'flex';
+    }
+
+    function fecharModalRecuperacao(e) {
+      if (e.target.id === 'modal-recuperacao') document.getElementById('modal-recuperacao').style.display = 'none';
+    }
+
+    function recuperarConta() {
+      const u = document.getElementById('rec-username').value.trim().toLowerCase();
+      const code = document.getElementById('rec-code').value.trim();
+      const newPass = document.getElementById('rec-new-pass').value.trim();
+      const msg = document.getElementById('rec-msg');
+
+      if (!u || !code || !newPass) {
+        msg.style.color = '#f44336';
+        msg.innerText = 'Preencha todos os campos!';
+        return;
+      }
+
+      if (!db) return;
+
+      const tx = db.transaction(["usuarios"], "readwrite");
+      const store = tx.objectStore("usuarios");
+      const req = store.get(u);
+
+      req.onsuccess = () => {
+        const user = req.result;
+        if (user && user.recoveryCode === code) {
+          user.password = newPass;
+          store.put(user);
+          msg.style.color = '#28a745';
+          msg.innerText = 'Senha alterada! Feche essa janela e faça login.';
+        } else {
+          msg.style.color = '#f44336';
+          msg.innerText = 'Usuário ou Senha Única inválida!';
+        }
+      };
+    }
+
+    function logout() {
+      currentUser = null;
+      localStorage.removeItem('currentUser');
+      updateUI();
+    }
+
+    function abrirModalPerfil() {
+      if (!currentUser) return;
+      document.getElementById('edit-username').value = currentUser.username;
+      document.getElementById('edit-bio').value = currentUser.bio || '';
+      document.getElementById('edit-avatar-preview').src = currentUser.avatar || 'https://via.placeholder.com/60/333/FFF?text=U';
+      document.getElementById('edit-profile-msg').innerText = '';
+      tempEditAvatarBase64 = null;
+      document.getElementById('modal-perfil').style.display = 'flex';
+    }
+
+    function salvarPerfil() {
+      if (!db) return;
+      const newUsername = document.getElementById('edit-username').value.trim().toLowerCase();
+      const newBio = document.getElementById('edit-bio').value.trim();
+      const msg = document.getElementById('edit-profile-msg');
+      msg.innerText = '';
+
+      if (!newUsername) {
+        msg.style.color = '#f44336';
+        msg.innerText = 'O nome de usuário não pode ficar em branco!';
+        return;
+      }
+
+      if (newUsername === ADMIN_NICK && currentUser.username !== ADMIN_NICK) {
+        msg.style.color = '#f44336';
+        msg.innerText = 'Este nickname é reservado para o Administrador!';
+        return;
+      }
+
+      const oldUsername = currentUser.username;
+      const newAvatar = tempEditAvatarBase64 || currentUser.avatar;
+
+      const tx = db.transaction(["usuarios", "posts", "grupos"], "readwrite");
+      const userStore = tx.objectStore("usuarios");
+      const postStore = tx.objectStore("posts");
+      const grupoStore = tx.objectStore("grupos");
+
+      userStore.get(newUsername).onsuccess = (e) => {
+        if (newUsername !== oldUsername && e.target.result) {
+          msg.style.color = '#f44336';
+          msg.innerText = 'Esse handle já está em uso!';
+          return;
+        }
+
+        userStore.get(oldUsername).onsuccess = (evt) => {
+          const userData = evt.target.result;
+          if (newUsername !== oldUsername) userStore.delete(oldUsername);
+
+          userStore.put({
+            username: newUsername,
+            password: userData ? userData.password : '',
+            recoveryCode: userData ? userData.recoveryCode : '',
+            avatar: newAvatar,
+            bio: newBio
+          });
+        };
+
+        postStore.openCursor().onsuccess = (evt) => {
+          const cursor = evt.target.result;
+          if (cursor) {
+            let post = cursor.value;
+            let mudou = false;
+
+            if (post.autor === oldUsername) {
+              post.autor = newUsername;
+              post.autorAvatar = newAvatar;
+              post.autorBio = newBio;
+              mudou = true;
+            }
+
+            if (post.comentarios && post.comentarios.length > 0) {
+              post.comentarios.forEach(c => {
+                if (c.autor === oldUsername) {
+                  c.autor = newUsername;
+                  c.autorAvatar = newAvatar;
+                  mudou = true;
+                }
+              });
+            }
+
+            if (mudou) cursor.update(post);
+            cursor.continue();
+          }
+        };
+
+        grupoStore.openCursor().onsuccess = (evt) => {
+          const cursor = evt.target.result;
+          if (cursor) {
+            let g = cursor.value;
+            let mudouGrupo = false;
+            if (g.criador === oldUsername) {
+              g.criador = newUsername;
+              mudouGrupo = true;
+            }
+            if (g.membros && g.membros.includes(oldUsername)) {
+              g.membros = g.membros.map(m => m === oldUsername ? newUsername : m);
+              mudouGrupo = true;
+            }
+            if (g.mensagens && g.mensagens.length > 0) {
+              g.mensagens.forEach(m => {
+                if (m.autor === oldUsername) {
+                  m.autor = newUsername;
+                  m.avatar = newAvatar;
+                  mudouGrupo = true;
+                }
+              });
+            }
+            if (mudouGrupo) cursor.update(g);
+            cursor.continue();
+          }
+        };
+
+        tx.oncomplete = () => {
+          currentUser = { username: newUsername, avatar: newAvatar, bio: newBio };
+          localStorage.setItem('currentUser', JSON.stringify(currentUser));
+          updateUI();
+          carregarAbasComunidades();
+          carregarPosts();
+          document.getElementById('modal-perfil').style.display = 'none';
+        };
+      };
+    }
+
+    function fecharModalPerfil(e) {
+      if (e.target.id === 'modal-perfil') document.getElementById('modal-perfil').style.display = 'none';
+    }
+
+    function validarSelecaoMidia(event) {
+      const file = event.target.files[0];
+      const status = document.getElementById('media-nome-status');
+      if (!file) return;
+
+      status.style.color = '#ff9800';
+      status.innerText = 'Processando arquivo...';
+
+      if (file.type.startsWith('image/')) {
+        comprimirImagem(file, 900, 0.75, (base64) => {
+          tempPostMedia = { type: 'image', data: base64 };
+          status.style.color = '#28a745';
+          status.innerText = '✓ Imagem Pronta!';
+        });
+      } else if (file.type.startsWith('video/')) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          tempPostMedia = { type: 'video', data: e.target.result };
+          status.style.color = '#28a745';
+          status.innerText = '✓ Vídeo Pronto!';
+        };
+        reader.readAsDataURL(file);
+      } else {
+        status.style.color = '#f44336';
+        status.innerText = 'Formato não suportado!';
+      }
+    }
+
+    function salvarGrupo() {
+      if (!db) return;
+      const name = document.getElementById('group-name').value.trim();
+      const desc = document.getElementById('group-desc').value.trim();
+      const isPrivate = document.getElementById('group-is-private').checked;
+      const msg = document.getElementById('action-msg');
+      msg.innerText = '';
+
+      if (!name) {
+        msg.style.color = '#f44336';
+        msg.innerText = 'Digite o nome da comunidade!';
+        return;
+      }
+
+      const tx = db.transaction(["grupos"], "readwrite");
+      const store = tx.objectStore("grupos");
+      
+      store.add({
+        nome: name,
+        descricao: desc,
+        icone: tempGroupIconBase64 || 'https://via.placeholder.com/60/333/FFF?text=C',
+        criador: currentUser.username,
+        isPrivate: isPrivate,
+        membros: [currentUser.username],
+        inviteToken: isPrivate ? Math.random().toString(36).substr(2, 9) : null,
+        mensagens: []
+      });
+
+      tx.oncomplete = () => {
+        msg.style.color = '#28a745';
+        msg.innerText = 'Comunidade criada com sucesso!';
+        document.getElementById('group-name').value = '';
+        document.getElementById('group-desc').value = '';
+        document.getElementById('group-is-private').checked = false;
+        tempGroupIconBase64 = null;
+        carregarGruposSelect();
+        carregarAbasComunidades();
+      };
+    }
+
+    function carregarGruposSelect() {
+      if (!db) return;
+      const select = document.getElementById('post-group-select');
+      select.innerHTML = '<option value="">Feed Geral</option>';
+
+      const tx = db.transaction(["grupos"], "readonly");
+      tx.objectStore("grupos").getAll().onsuccess = (e) => {
+        const grupos = e.target.result;
+        grupos.forEach(g => {
+          if (!g.isPrivate || (currentUser && (g.membros.includes(currentUser.username) || isAdmin()))) {
+            const prefixo = g.isPrivate ? '🔒 ' : '👥 ';
+            select.innerHTML += `<option value="${g.nome}">${prefixo}${g.nome}</option>`;
+          }
+        });
+      };
+    }
+
+    function carregarAbasComunidades() {
+      if (!db) return;
+      const navBar = document.getElementById('communities-nav-bar');
+      
+      const tx = db.transaction(["grupos"], "readonly");
+      tx.objectStore("grupos").getAll().onsuccess = (e) => {
+        const grupos = e.target.result;
+        
+        let html = `<div class="community-tab ${comunidadeAtiva === '' ? 'active' : ''}" onclick="filtrarComunidade('')">🔥 Feed Geral</div>`;
+        
+        grupos.forEach(g => {
+          const isPrivate = g.isPrivate;
+          const icone = isPrivate ? '🔒 ' : '👥 ';
+          const isActive = comunidadeAtiva === g.nome ? 'active' : '';
+          
+          let inviteButtonHtml = '';
+          if (isPrivate && currentUser && (g.criador === currentUser.username || isAdmin())) {
+            inviteButtonHtml = ` <span onclick="event.stopPropagation(); copiarLinkConvite('${g.inviteToken}')" style="color:#00a2ff; font-size:11px; margin-left:4px;" title="Copiar Link de Convite">🔗</span>`;
+          }
+
+          let deleteAdminBtn = isAdmin() ? ` <span onclick="event.stopPropagation(); adminDeletarGrupo('${g.nome}')" style="color:#ff4757; font-weight:bold; margin-left:4px;" title="Deletar Comunidade">×</span>` : '';
+          
+          html += `<div class="community-tab ${isActive}" onclick="clicarAbaComunidade('${g.nome}')">${icone}${g.nome}${inviteButtonHtml}${deleteAdminBtn}</div>`;
+        });
+
+        navBar.innerHTML = html;
+      };
+    }
+
+    function clicarAbaComunidade(nomeGrupo) {
+      if (!db) return;
+      const tx = db.transaction(["grupos"], "readonly");
+      tx.objectStore("grupos").getAll().onsuccess = (e) => {
+        const grupo = e.target.result.find(g => g.nome === nomeGrupo);
+        if (grupo && grupo.isPrivate) {
+          const podeAcessar = currentUser && (grupo.membros.includes(currentUser.username) || isAdmin());
+          if (!podeAcessar) {
+            alert("Esta comunidade é privada! Você precisa de um link de convite válido para entrar.");
+            return;
+          }
+        }
+        filtrarComunidade(nomeGrupo);
+      };
+    }
+
+    function copiarLinkConvite(token) {
+      const link = `${window.location.origin}${window.location.pathname}?join=${token}`;
+      prompt("Copie este link de convite exclusivo para enviar aos membros:", link);
+    }
+
+    function filtrarComunidade(nomeGrupo) {
+      comunidadeAtiva = nomeGrupo;
+      document.getElementById('current-community-title').innerText = nomeGrupo ? `Comunidade: ${nomeGrupo}` : 'Feed Geral';
+      
+      // Se o feed geral estiver selecionado, força a visão de posts pois feed geral não tem chat de grupo específico
+      if (nomeGrupo === "" && modoVisualizacao === 'chat') {
+        alternarModo('posts');
+      }
+
+      carregarAbasComunidades();
+      if (modoVisualizacao === 'posts') {
+        carregarPosts();
+      } else {
+        carregarMensagensChat();
+      }
+    }
+
+    function enviarMensagemChat() {
+      if (!currentUser || !comunidadeAtiva) {
+        alert("Selecione uma comunidade para enviar mensagens no chat.");
+        return;
+      }
+      const input = document.getElementById('chat-input');
+      const texto = input.value.trim();
+      if (!texto) return;
+
+      const tx = db.transaction(["grupos"], "readwrite");
+      const store = tx.objectStore("grupos");
+      
+      store.openCursor().onsuccess = (e) => {
+        const cursor = e.target.result;
+        if (cursor) {
+          let g = cursor.value;
+          if (g.nome === comunidadeAtiva) {
+            if (!g.mensagens) g.mensagens = [];
+            g.mensagens.push({
+              autor: currentUser.username,
+              avatar: currentUser.avatar,
+              texto: texto,
+              data: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            });
+            cursor.update(g);
+            input.value = '';
+            carregarMensagensChat();
+          }
+          cursor.continue();
+        }
+      };
+    }
+
+    function carregarMensagensChat() {
+      if (!comunidadeAtiva) return;
+      const container = document.getElementById('chat-messages');
+      container.innerHTML = '<p style="color:#777; text-align:center;">Carregando chat...</p>';
+
+      const tx = db.transaction(["grupos"], "readonly");
+      tx.objectStore("grupos").getAll().onsuccess = (e) => {
+        const grupo = e.target.result.find(g => g.nome === comunidadeAtiva);
+        container.innerHTML = '';
+        
+        if (grupo && grupo.mensagens && grupo.mensagens.length > 0) {
+          grupo.mensagens.forEach(msg => {
+            const isMe = currentUser && msg.autor === currentUser.username;
+            const isMsgAdmin = msg.autor.toLowerCase() === ADMIN_NICK;
+            const adminBadgeHtml = isMsgAdmin ? `<span class="admin-badge">ADMIN</span>` : '';
+
+            const div = document.createElement('div');
+            div.className = `chat-msg ${isMe ? 'me' : ''}`;
+            div.innerHTML = `
+              <div class="chat-msg-header">
+                <img class="chat-msg-avatar" src="${msg.avatar || 'https://via.placeholder.com/20/333/FFF?text=U'}" alt="Avatar">
+                <strong style="font-size:12px;">@${msg.autor}</strong> ${adminBadgeHtml}
+                <span style="font-size:10px; opacity:0.6; margin-left:auto;">${msg.data || ''}</span>
+              </div>
+              <div style="word-break: break-word;">${msg.texto}</div>
+            `;
+            container.appendChild(div);
+          });
+          container.scrollTop = container.scrollHeight;
+        } else {
+          container.innerHTML = '<p style="text-align:center; color:#555; margin-top:20px;">Nenhuma mensagem nesta comunidade ainda. Seja o primeiro a falar!</p>';
+        }
+      };
+    }
+
+    function salvarPost() {
+      if (!db) return;
+      const msg = document.getElementById('action-msg');
+      msg.innerText = '';
+
+      if (!tempPostMedia) {
+        msg.style.color = '#f44336';
+        msg.innerText = 'Selecione uma imagem ou vídeo!';
+        return;
+      }
+
+      const grupo = document.getElementById('post-group-select').value;
+      const title = document.getElementById('post-title').value.trim();
+      const desc = document.getElementById('post-desc').value.trim();
+      let link = document.getElementById('post-link').value.trim();
+
+      if (link && !link.startsWith('http://') && !link.startsWith('https://')) {
+        link = 'https://' + link;
+      }
+
+      const tx = db.transaction(["posts"], "readwrite");
+      const store = tx.objectStore("posts");
+      
+      store.add({
+        mediaType: tempPostMedia.type,
+        mediaData: tempPostMedia.data,
+        grupo: grupo || null,
+        autor: currentUser.username,
+        autorAvatar: currentUser.avatar,
+        autorBio: currentUser.bio || '',
+        titulo: title || 'Sem título',
+        descricao: desc,
+        link: link,
+        dataCriacao: new Date().toLocaleString('pt-BR'),
+        comentarios: []
+      });
+
+      tx.oncomplete = () => {
+        msg.style.color = '#28a745';
+        msg.innerText = 'Post publicado com sucesso!';
+        document.getElementById('mediaInput').value = '';
+        document.getElementById('post-title').value = '';
+        document.getElementById('post-desc').value = '';
+        document.getElementById('post-link').value = '';
+        document.getElementById('media-nome-status').innerText = '';
+        tempPostMedia = null;
+        carregarPosts();
+      };
+    }
+
+    function carregarPosts() {
+      if (!db) return;
+      const galeria = document.getElementById('galeria');
+      galeria.innerHTML = '';
+
+      const tx = db.transaction(["posts", "grupos"], "readonly");
+      const grupoStore = tx.objectStore("grupos");
+      
+      grupoStore.getAll().onsuccess = (eGrupos) => {
+        const grupos = eGrupos.target.result;
+
+        tx.objectStore("posts").getAll().onsuccess = (ePosts) => {
+          let posts = ePosts.target.result.reverse();
+
+          posts = posts.filter(post => {
+            if (!post.grupo) return true;
+            const grupoInfo = grupos.find(g => g.nome === post.grupo);
+            if (!grupoInfo) return true;
+
+            if (grupoInfo.isPrivate) {
+              const temAcesso = currentUser && (grupoInfo.membros && grupoInfo.membros.includes(currentUser.username) || isAdmin());
+              return temAcesso;
+            }
+            return true;
+          });
+
+          if (comunidadeAtiva !== "") {
+            posts = posts.filter(p => p.grupo === comunidadeAtiva);
+          }
+          
+          if (posts.length === 0) {
+            galeria.innerHTML = '<p style="color:#888;">Nenhuma publicação encontrada nesta aba.</p>';
+            return;
+          }
+
+          posts.forEach(post => {
+            const card = document.createElement('div');
+            card.className = 'post-card';
+            card.onclick = () => abrirModalPost(post.id);
+            
+            let mediaElement = post.mediaType === 'video'
+              ? `<video src="${post.mediaData}" muted preload="metadata"></video>`
+              : `<img src="${post.mediaData}" alt="Mídia">`;
+
+            const isPostAuthorAdmin = post.autor.toLowerCase() === ADMIN_NICK;
+            const authorAdminBadge = isPostAuthorAdmin ? `<span class="admin-badge">ADMIN</span>` : '';
+            
+            let deleteBtnHtml = '';
+            if (currentUser && (currentUser.username === post.autor || isAdmin())) {
+              deleteBtnHtml = `<button class="btn btn-danger" style="font-size:10px; padding:2px 6px;" onclick="event.stopPropagation(); deletarPost(${post.id})">Apagar</button>`;
+            }
+
+            card.innerHTML = `
+              ${mediaElement}
+              <div class="post-meta">
+                ${post.grupo ? `<span class="group-badge">👥 ${post.grupo}</span>` : ''}
+                <div class="post-author-box">
+                  <div class="author-info-left">
+                    <img class="post-author-avatar" src="${post.autorAvatar || 'https://via.placeholder.com/25/333/FFF?text=U'}" alt="Avatar">
+                    <strong>@${post.autor}</strong> ${authorAdminBadge}
+                  </div>
+                  ${deleteBtnHtml}
+                </div>
+                <div class="post-title">${post.titulo}</div>
+                ${post.descricao ? `<div class="post-desc">${post.descricao}</div>` : ''}
+                ${post.link ? `<a class="post-link" href="${post.link}" target="_blank" onclick="event.stopPropagation()">🔗 ${post.link}</a>` : ''}
+                <small style="margin-top:auto; padding-top:6px; color:#777;">💬 ${post.comentarios ? post.comentarios.length : 0} comentários</small>
+              </div>
+            `;
+            galeria.appendChild(card);
+          });
+        };
+      };
+    }
+
+    function deletarPost(postId) {
+      if (!confirm("Tem certeza que deseja apagar esta publicação?")) return;
+      const tx = db.transaction(["posts"], "readwrite");
+      tx.objectStore("posts").delete(postId);
+      tx.oncomplete = () => {
+        carregarPosts();
+        document.getElementById('modal-post').style.display = 'none';
+      };
+    }
+
+    function adminDeletarGrupo(nomeGrupo) {
+      if (!isAdmin()) return;
+      if (!confirm(`ADMIN: Deseja realmente deletar a comunidade "${nomeGrupo}"?`)) return;
+
+      const tx = db.transaction(["grupos", "posts"], "readwrite");
+      const grupoStore = tx.objectStore("grupos");
+      const postStore = tx.objectStore("posts");
+
+      grupoStore.openCursor().onsuccess = (e) => {
+        const cursor = e.target.result;
+        if (cursor) {
+          if (cursor.value.nome === nomeGrupo) cursor.delete();
+          cursor.continue();
+        }
+      };
+
+      postStore.openCursor().onsuccess = (e) => {
+        const cursor = e.target.result;
+        if (cursor) {
+          let p = cursor.value;
+          if (p.grupo === nomeGrupo) {
+            p.grupo = null;
+            cursor.update(p);
+          }
+          cursor.continue();
+        }
+      };
+
+      tx.oncomplete = () => {
+        if (comunidadeAtiva === nomeGrupo) {
+          comunidadeAtiva = "";
+          alternarModo('posts');
+        }
+        carregarAbasComunidades();
+        carregarGruposSelect();
+        carregarPosts();
+      };
+    }
+
+    function adminLimparBanco() {
+      if (!isAdmin()) return;
+      if (!confirm("ATENÇÃO ADMIN: Deseja apagar todos os posts e comunidades do sistema?")) return;
+      
+      const tx = db.transaction(["posts", "grupos"], "readwrite");
+      tx.objectStore("posts").clear();
+      tx.objectStore("grupos").clear();
+
+      tx.oncomplete = () => {
+        comunidadeAtiva = "";
+        alternarModo('posts');
+        carregarAbasComunidades();
+        carregarGruposSelect();
+        carregarPosts();
+        alert("Sistema limpo com sucesso!");
+      };
+    }
+
+    function abrirModalPost(postId) {
+      if (!db) return;
+      postSelecionadoId = postId;
+      const tx = db.transaction(["posts"], "readonly");
+      const store = tx.objectStore("posts");
+      const req = store.get(postId);
+
+      req.onsuccess = () => {
+        const post = req.result;
+        const container = document.getElementById('modal-media-container');
+        
+        if (post.mediaType === 'video') {
+          container.innerHTML = `<video src="${post.mediaData}" controls autoplay style="max-width:100%; max-height:70vh;"></video>`;
+        } else {
+          container.innerHTML = `<img src="${post.mediaData}" alt="Mídia Ampliada">`;
+        }
+
+        document.getElementById('modal-group-badge').innerHTML = post.grupo 
+          ? `<span class="group-badge" style="font-size:12px; margin-bottom:8px;">👥 Comunidade: ${post.grupo}</span>` 
+          : '';
+
+        document.getElementById('modal-author-avatar').src = post.autorAvatar || 'https://via.placeholder.com/40/333/FFF?text=U';
+        document.getElementById('modal-author-name').innerText = `@${post.autor}`;
+        document.getElementById('modal-author-bio').innerText = post.autorBio ? `"${post.autorBio}"` : '';
+        document.getElementById('modal-date').innerText = `Publicado em: ${post.dataCriacao}`;
+        
+        document.getElementById('modal-title').innerText = post.titulo;
+        document.getElementById('modal-desc').innerText = post.descricao || 'Sem legenda.';
+        
+        const linkBox = document.getElementById('modal-link-box');
+        linkBox.innerHTML = post.link ? `<a class="post-link" href="${post.link}" target="_blank" style="font-size:13px;">🔗 ${post.link}</a>` : '';
+        
+        renderizarComentarios(post.comentarios || []);
+        document.getElementById('comment-form').style.display = currentUser ? 'block' : 'none';
+        document.getElementById('modal-post').style.display = 'flex';
+      };
+    }
+
+    function renderizarComentarios(comentarios) {
+      const container = document.getElementById('modal-comments');
+      if (comentarios.length === 0) {
+        container.innerHTML = '<p style="color:#666; font-size:13px;">Nenhum comentário ainda.</p>';
+        return;
+      }
+
+      container.innerHTML = comentarios.map((c, index) => {
+        const isCommentAuthorAdmin = c.autor.toLowerCase() === ADMIN_NICK;
+        const cAdminBadge = isCommentAuthorAdmin ? `<span class="admin-badge">ADMIN</span>` : '';
+        
+        let deleteCommentBtn = '';
+        if (currentUser && (currentUser.username === c.autor || isAdmin())) {
+          deleteCommentBtn = `<span onclick="deletarComentario(${index})" style="color:#ff4757; cursor:pointer; font-size:11px;" title="Apagar">❌</span>`;
+        }
+
+        return `
+          <div class="comment-item">
+            <div style="display:flex; align-items:flex-start; gap:8px;">
+              <img class="comment-avatar" src="${c.autorAvatar || 'https://via.placeholder.com/22/333/FFF?text=U'}" alt="Avatar">
+              <div>
+                <strong>@${c.autor} ${cAdminBadge}:</strong> <span>${c.texto}</span>
+              </div>
+            </div>
+            ${deleteCommentBtn}
+          </div>
+        `;
+      }).join('');
+    }
+
+    function adicionarComentario() {
+      if (!currentUser || !postSelecionadoId || !db) return;
+
+      const input = document.getElementById('new-comment');
+      const texto = input.value.trim();
+      if (!texto) return;
+
+      const tx = db.transaction(["posts"], "readwrite");
+      const store = tx.objectStore("posts");
+      const req = store.get(postSelecionadoId);
+
+      req.onsuccess = () => {
+        const post = req.result;
+        if (!post.comentarios) post.comentarios = [];
+
+        post.comentarios.push({
+          autor: currentUser.username,
+          autorAvatar: currentUser.avatar,
+          texto: texto,
+          data: new Date().toLocaleTimeString()
+        });
+
+        store.put(post);
+
+        tx.oncomplete = () => {
+          input.value = '';
+          renderizarComentarios(post.comentarios);
+          carregarPosts();
+        };
+      };
+    }
+
+    function deletarComentario(index) {
+      if (!db || !postSelecionadoId) return;
+      const tx = db.transaction(["posts"], "readwrite");
+      const store = tx.objectStore("posts");
+      const req = store.get(postSelecionadoId);
+
+      req.onsuccess = () => {
+        const post = req.result;
+        if (post && post.comentarios) {
+          post.comentarios.splice(index, 1);
+          store.put(post);
+          tx.oncomplete = () => {
+            renderizarComentarios(post.comentarios);
+            carregarPosts();
+          };
+        }
+      };
+    }
+
+    function fecharModalPost(e) {
+      if (e.target.id === 'modal-post') {
+        const container = document.getElementById('modal-media-container');
+        container.innerHTML = '';
+        document.getElementById('modal-post').style.display = 'none';
+        postSelecionadoId = null;
+      }
+    }
+  </script>
+</body>
+</html>
+
+
