@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Fanmade Communities</title>
   
-  <!-- Firebase SDKs Otimizados via CDN com suporte a IndexedDB para login instantâneo -->
+  <!-- Firebase SDKs Otimizados via CDN com suporte a IndexedDB -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { initializeAuth, indexedDBLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
@@ -22,11 +22,7 @@
     };
 
     const app = initializeApp(firebaseConfig);
-    
-    window.auth = initializeAuth(app, {
-      persistence: indexedDBLocalPersistence
-    });
-    
+    window.auth = initializeAuth(app, { persistence: indexedDBLocalPersistence });
     window.db = getFirestore(app);
   </script>
 
@@ -217,13 +213,10 @@
     </div>
   </div>
 
-  <!-- Modal de Gerenciamento do Dono -->
   <div id="modal-gerenciar" class="modal" onclick="fecharModalGerenciar(event)">
     <div class="modal-box" onclick="event.stopPropagation()">
       <h3 style="color: #ff9800; margin-bottom: 15px;">Gerenciar Comunidade</h3>
-      <div id="conteudo-gerenciamento" style="display: flex; flex-direction: column; gap: 12px; text-align: left; font-size: 13px;">
-        <!-- Preenchido Dinamicamente -->
-      </div>
+      <div id="conteudo-gerenciamento" style="display: flex; flex-direction: column; gap: 12px; text-align: left; font-size: 13px;"></div>
       <br>
       <button class="btn btn-secondary" onclick="document.getElementById('modal-gerenciar').style.display='none'">Fechar</button>
     </div>
@@ -256,10 +249,7 @@
       const file = event.target.files[0];
       if (file) {
         const reader = new FileReader();
-        reader.onload = function(e) {
-          tempAvatarBase64 = e.target.result;
-          document.getElementById('avatar-preview-img').src = tempAvatarBase64;
-        };
+        reader.onload = e => { tempAvatarBase64 = e.target.result; document.getElementById('avatar-preview-img').src = tempAvatarBase64; };
         reader.readAsDataURL(file);
       }
     }
@@ -268,10 +258,7 @@
       const file = event.target.files[0];
       if (file) {
         const reader = new FileReader();
-        reader.onload = function(e) {
-          tempGroupIconBase64 = e.target.result;
-          document.getElementById('group-icon-preview').src = tempGroupIconBase64;
-        };
+        reader.onload = e => { tempGroupIconBase64 = e.target.result; document.getElementById('group-icon-preview').src = tempGroupIconBase64; };
         reader.readAsDataURL(file);
       }
     }
@@ -280,10 +267,7 @@
       const file = event.target.files[0];
       if (file) {
         const reader = new FileReader();
-        reader.onload = function(e) {
-          tempMediaBase64 = e.target.result;
-          document.getElementById('media-nome-status').innerText = "✓ Arquivo pronto";
-        };
+        reader.onload = e => { tempMediaBase64 = e.target.result; document.getElementById('media-nome-status').innerText = "✓ Arquivo pronto"; };
         reader.readAsDataURL(file);
       }
     }
@@ -317,7 +301,6 @@
       }
     }
 
-    // Gerenciador de IDs e Autenticação com suporte a id 0000 para roxfoxyt
     async function handleAuth() {
       const usernameInput = document.getElementById('username').value.trim();
       const passwordInput = document.getElementById('password').value.trim();
@@ -330,35 +313,26 @@
         return;
       }
 
-      try {
-        msgEl.style.color = '#ff9800';
-        msgEl.innerText = isRegisterMode ? "Cadastrando..." : "Entrando...";
+      let assignedId = Math.floor(1000 + Math.random() * 9000).toString();
+      let isAdmin = false;
 
-        // Atribuição de ID especial para conta admin roxfoxyt
-        let assignedId = Math.floor(1000 + Math.random() * 9000).toString();
-        let isAdmin = false;
-
-        if (usernameInput.toLowerCase() === 'roxfoxyt') {
-          assignedId = '0000';
-          isAdmin = true;
-        }
-
-        window.currentUser = {
-          id: assignedId,
-          username: usernameInput,
-          bio: bioInput,
-          avatar: tempAvatarBase64 || 'https://via.placeholder.com/60/333333/FFFFFF?text=' + usernameInput.charAt(0).toUpperCase(),
-          isAdminGlobal: isAdmin
-        };
-
-        document.getElementById('auth-panel').style.display = 'none';
-        document.getElementById('upload-panel').style.display = 'block';
-        atualizarHeaderUsuario();
-        carregarDadosComunidades();
-      } catch (e) {
-        msgEl.style.color = '#dc3545';
-        msgEl.innerText = "Erro na autenticação.";
+      if (usernameInput.toLowerCase() === 'roxfoxyt') {
+        assignedId = '0000';
+        isAdmin = true;
       }
+
+      window.currentUser = {
+        id: assignedId,
+        username: usernameInput,
+        bio: bioInput,
+        avatar: tempAvatarBase64 || 'https://via.placeholder.com/60/333333/FFFFFF?text=' + usernameInput.charAt(0).toUpperCase(),
+        isAdminGlobal: isAdmin
+      };
+
+      document.getElementById('auth-panel').style.display = 'none';
+      document.getElementById('upload-panel').style.display = 'block';
+      atualizarHeaderUsuario();
+      carregarDadosComunidades();
     }
 
     function atualizarHeaderUsuario() {
@@ -372,7 +346,6 @@
       `;
     }
 
-    // Criar Comunidade com Regras de Dono
     async function salvarGrupo() {
       const nome = document.getElementById('group-name').value.trim();
       const desc = document.getElementById('group-desc').value.trim();
@@ -399,14 +372,11 @@
         donoUsername: window.currentUser.username,
         membros: [window.currentUser.username],
         banidos: [],
-        cargos: {
-          [window.currentUser.username]: "Dono"
-        },
+        cargos: { [window.currentUser.username]: "Dono" },
         criadoEm: Date.now()
       };
 
-      // Simulação de salvamento local ou Firestore
-      if(!window.mockGrupos) window.mockGrupos = [];
+      if (!window.mockGrupos) window.mockGrupos = [];
       window.mockGrupos.push(dadosGrupo);
 
       msgEl.style.color = '#28a745';
@@ -455,8 +425,6 @@
       if (grupoObj) {
         document.getElementById('current-community-title').innerText = grupoObj.nome;
         document.getElementById('btn-mode-chat').style.display = 'inline-block';
-        
-        // Verifica se o usuário logado é o dono ou admin global para habilitar painel de gerenciamento
         const isDono = window.currentUser && (window.currentUser.id === grupoObj.donoId || window.currentUser.isAdminGlobal);
         document.getElementById('btn-manage-group').style.display = isDono ? 'inline-block' : 'none';
       } else {
@@ -476,11 +444,11 @@
 
       if (!tempMediaBase64) {
         msgEl.style.color = '#dc3545';
-        msgEl.innerText = "Selecione uma imagem ou vídeo para publicar!";
+        msgEl.innerText = "Selecione uma imagem ou vídeo!";
         return;
       }
 
-      if(!window.mockPosts) window.mockPosts = [];
+      if (!window.mockPosts) window.mockPosts = [];
       window.mockPosts.unshift({
         id: 'post_' + Date.now(),
         grupoId: grupoId,
@@ -506,7 +474,6 @@
     function carregarPosts() {
       const galeria = document.getElementById('galeria');
       const posts = window.mockPosts || [];
-      
       const filtrados = posts.filter(p => p.grupoId === currentCommunity);
       
       let html = '';
@@ -531,7 +498,6 @@
       galeria.innerHTML = html || '<p style="color:#777; grid-column: 1/-1; text-align:center;">Nenhuma publicação encontrada.</p>';
     }
 
-    // Funcionalidades de Gerenciamento do Dono (Cargos, Privado, +18, Banir, Transferir Posse, Excluir)
     function abrirPainelGerenciamento() {
       const grupos = window.mockGrupos || [];
       const grupoObj = grupos.find(g => g.id === currentCommunity);
