@@ -23,7 +23,6 @@
 
     const app = initializeApp(firebaseConfig);
     
-    // Inicializa o Auth forçando o IndexedDB para agilizar a recuperação da sessão do usuário
     window.auth = initializeAuth(app, {
       persistence: indexedDBLocalPersistence
     });
@@ -89,8 +88,6 @@
     img.post-author-avatar { width: 25px !important; height: 25px !important; border-radius: 50%; object-fit: cover; display: block; }
     .post-title { font-size: 16px; font-weight: bold; color: #fff; margin-top: 4px; }
     .post-desc { font-size: 13px; color: #ccc; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
-    .post-link { color: #00a2ff; text-decoration: none; word-break: break-all; font-size: 12px; }
-    .post-link:hover { text-decoration: underline; }
 
     .msg { margin-top: 10px; font-weight: bold; font-size: 14px; text-align: center; }
 
@@ -100,45 +97,13 @@
     .chat-input-area { padding: 10px; background: #222; display: flex; gap: 10px; border-top: 1px solid #333; }
     .chat-msg { background: #2a2a2a; padding: 10px 14px; border-radius: 12px; max-width: 75%; align-self: flex-start; font-size: 14px; color: #fff; border: 1px solid #444; }
     .chat-msg.me { background: #ff9800; color: #000; align-self: flex-end; border-color: #e68a00; }
-    .chat-msg-header { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
-    img.chat-msg-avatar { width: 20px !important; height: 20px !important; border-radius: 50%; object-fit: cover; }
-
-    .call-notification-banner { background: #2a1f00; border: 1px solid #ff9800; padding: 12px; border-radius: 8px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; font-size: 14px; }
 
     .modal { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.85); z-index: 1000; justify-content: center; align-items: center; }
-    .modal-content { background: #1e1e1e; border-radius: 8px; max-width: 850px; width: 90%; max-height: 90vh; display: flex; flex-direction: row; overflow: hidden; border: 1px solid #444; }
-    @media (max-width: 650px) { .modal-content { flex-direction: column; overflow-y: auto; } }
-    
-    .modal-media { flex: 1.2; background: #000; display: flex; justify-content: center; align-items: center; max-height: 70vh; }
-    .modal-media img, .modal-media video { max-width: 100%; max-height: 70vh; object-fit: contain; }
-    
-    .modal-details { flex: 1; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; background: #181818; }
-    .modal-author-info { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
-    img.modal-avatar { width: 40px !important; height: 40px !important; border-radius: 50%; object-fit: cover; display: block; }
-    
-    .comments-list { flex: 1; overflow-y: auto; max-height: 200px; margin: 15px 0; border-top: 1px solid #333; border-bottom: 1px solid #333; padding: 10px 0; }
-    .comment-item { font-size: 13px; margin-bottom: 8px; line-height: 1.4; display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
-    img.comment-avatar { width: 22px !important; height: 22px !important; border-radius: 50%; object-fit: cover; display: block; }
-
-    .modal-box { background: #1e1e1e; border-radius: 8px; max-width: 480px; width: 90%; padding: 25px; border: 1px solid #444; text-align: center; }
-    .bio-text { font-size: 12px; color: #aaa; margin-top: -2px; font-style: italic; }
+    .modal-box { background: #1e1e1e; border-radius: 8px; max-width: 480px; width: 90%; padding: 25px; border: 1px solid #444; text-align: center; max-height: 90vh; overflow-y: auto; }
 
     .tabs { display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; }
     .tab { padding: 8px 16px; background: #2a2a2a; border-radius: 5px; cursor: pointer; font-size: 14px; font-weight: bold; }
     .tab.active { background: #ff9800; color: #000; }
-
-    .call-active-container { display: flex; flex-direction: column; height: 500px; background: #151515; border-radius: 8px; border: 1px solid #333; overflow: hidden; padding: 15px; gap: 15px; }
-    .call-header-info { display: flex; justify-content: space-between; align-items: center; background: #222; padding: 10px 15px; border-radius: 6px; border: 1px solid #333; }
-    .participants-grid { flex: 1; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; align-content: center; justify-content: center; }
-    
-    .participant-card { background: #222; border-radius: 8px; border: 2px solid #333; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 15px; position: relative; gap: 10px; overflow: hidden; aspect-ratio: 4 / 3; }
-    .participant-card.speaking { border-color: #28a745 !important; box-shadow: 0 0 10px rgba(40, 167, 69, 0.5); }
-    
-    img.participant-avatar { width: 80px !important; height: 80px !important; border-radius: 6px; object-fit: cover; border: 2px solid #555; }
-    .participant-video { width: 100%; height: 100%; position: absolute; top: 0; left: 0; object-fit: cover; background: #000; display: none; z-index: 2; border-radius: 6px; }
-    .participant-card span { z-index: 3; position: relative; text-shadow: 0 1px 3px rgba(0,0,0,0.8); }
-    .participant-card img.participant-avatar { z-index: 3; position: relative; }
-    .call-controls { display: flex; justify-content: center; gap: 10px; background: #222; padding: 12px; border-radius: 6px; border: 1px solid #333; }
   </style>
 </head>
 <body>
@@ -170,69 +135,57 @@
       <div class="avatar-preview-box">
         <img id="avatar-preview-img" class="avatar-preview" src="https://via.placeholder.com/60/333333/FFFFFF?text=Perfil" alt="Preview">
         <label class="btn btn-upload" for="avatarInput">Escolher Foto de Perfil</label>
-        <input type="file" id="avatarInput" accept="image/*" onchange="carregarPreviewAvatar(event, 'avatar-preview-img', 'tempRegister')">
+        <input type="file" id="avatarInput" accept="image/*" onchange="carregarPreviewAvatar(event)">
       </div>
       <textarea id="reg-bio" placeholder="Escreva uma breve bio/descrição..."></textarea>
     </div>
 
     <input type="text" id="username" placeholder="Seu Usuário (@nickname)...">
     <input type="password" id="password" placeholder="Sua Senha...">
-    <input type="password" id="reg-recovery-code" placeholder="Defina sua Senha Única (para recuperação)..." style="display: none;">
     <br><br>
     <button class="btn" id="btn-submit" onclick="handleAuth()">Entrar</button>
     <div style="margin-top: 12px; font-size: 13px; color: #aaa;">
       <span id="auth-link-text">Não tem conta?</span> 
       <a href="javascript:void(0)" onclick="toggleAuthMode()" id="auth-link" style="color:#ff9800">Cadastre-se</a>
-      <div id="forgot-link-box" style="margin-top: 8px;">
-        <a href="javascript:void(0)" onclick="abrirModalRecuperacao()" style="color:#aaa; font-size:12px;">Esqueci minha senha</a>
-      </div>
     </div>
     <div id="auth-msg" class="msg"></div>
   </div>
 
   <div id="upload-panel" class="card" style="display: none;">
     <div class="tabs">
-      <div class="tab active" id="tab-post" onclick="mudarAbaPainel('post')">📸 / 🎥 Criar Publicação</div>
+      <div class="tab active" id="tab-post" onclick="mudarAbaPainel('post')">📸 Criar Publicação</div>
       <div class="tab" id="tab-grupo" onclick="mudarAbaPainel('grupo')">👥 Criar Comunidade</div>
     </div>
 
     <div id="form-post">
-      <p style="color: #aaa; margin-bottom: 12px; font-size: 13px;">Selecione uma imagem ou vídeo para publicar:</p>
-
       <select id="post-group-select">
         <option value="">Feed Geral</option>
       </select>
-
-      <label class="btn btn-upload" for="mediaInput">1. Selecionar Imagem ou Vídeo</label>
+      <label class="btn btn-upload" for="mediaInput">Selecionar Imagem ou Vídeo</label>
       <input type="file" id="mediaInput" accept="image/*,video/*" onchange="validarSelecaoMidia(event)">
       <span id="media-nome-status" style="font-size: 13px; color: #28a745; margin-left: 10px;"></span>
-
       <input type="text" id="post-title" placeholder="Título da Publicação...">
       <textarea id="post-desc" placeholder="Escreva uma legenda / descrição..."></textarea>
-      <input type="text" id="post-link" placeholder="Link relacionado (ex: https://site.com)...">
-
       <button class="btn" onclick="salvarPost()" style="width: 100%; margin-top: 10px;">Publicar na Comunidade</button>
     </div>
 
     <div id="form-grupo" style="display: none;">
-      <p style="color: #aaa; margin-bottom: 12px; font-size: 13px;">Crie uma aba de comunidade para reunir posts e chamadas:</p>
-      
       <div class="avatar-preview-box">
-        <img id="group-icon-preview" class="avatar-preview" src="https://via.placeholder.com/60/333/FFFFFF?text=Grupo" alt="Ícone Grupo">
+        <img id="group-icon-preview" class="avatar-preview" src="https://via.placeholder.com/60/333/FFFFFF?text=Grupo" alt="Ícone">
         <label class="btn btn-upload" for="groupIconInput">Ícone da Comunidade</label>
         <input type="file" id="groupIconInput" accept="image/*" onchange="carregarPreviewGrupo(event)">
       </div>
-
-      <input type="text" id="group-name" placeholder="Nome da Comunidade (ex: RPG, Arte, Animes)...">
+      <input type="text" id="group-name" placeholder="Nome da Comunidade...">
       <textarea id="group-desc" placeholder="Sobre o que é esta comunidade?"></textarea>
+      <input type="text" id="group-site" placeholder="Link/Site relacionado (opcional)...">
       
-      <label style="display: flex; align-items: center; gap: 8px; margin: 12px 0; cursor: pointer; font-size: 14px;">
-        <input type="checkbox" id="group-is-private" style="width: auto;"> 🔒 Tornar Comunidade Privada
-      </label>
+      <div style="text-align: left; margin: 10px 0; font-size: 14px; display: flex; flex-direction: column; gap: 8px;">
+        <label><input type="checkbox" id="group-is-private"> 🔒 Comunidade Privada</label>
+        <label><input type="checkbox" id="group-is-nsfw"> 🔞 Conteúdo +18</label>
+      </div>
 
-      <button class="btn btn-secondary" id="btn-criar-grupo" onclick="salvarGrupo()" style="width: 100%; margin-top: 10px;">Criar Comunidade</button>
+      <button class="btn btn-secondary" onclick="salvarGrupo()" style="width: 100%; margin-top: 10px;">Criar Comunidade</button>
     </div>
-
     <div id="action-msg" class="msg"></div>
   </div>
 
@@ -241,9 +194,9 @@
   </div>
 
   <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
-    <div id="community-header-info" style="display: flex; align-items: center; gap: 10px;">
-      <img id="active-community-avatar" src="" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; display: none;" alt="Avatar">
+    <div style="display: flex; align-items: center; gap: 10px;">
       <h3 id="current-community-title" style="color: #ff9800; margin: 0;">Feed Geral</h3>
+      <button class="btn btn-secondary" id="btn-manage-group" style="display: none; padding: 4px 10px; font-size: 12px;" onclick="abrirPainelGerenciamento()">⚙️ Gerenciar Comunidade</button>
     </div>
     <div id="view-mode-selector" style="display: flex; gap: 8px;">
       <button class="btn" id="btn-mode-posts" onclick="alternarModo('posts')">🖼️ Posts</button>
@@ -255,16 +208,8 @@
 
   <div id="chat-box" class="chat-container" style="display: none;">
     <div class="chat-header-actions">
-      <span style="font-size: 14px; color: #ff9800; font-weight: bold;">💬 Chat</span>
-      <div style="display: flex; gap: 8px;">
-        <button class="btn btn-secondary" style="padding: 5px 12px; font-size: 12px;" onclick="iniciarChamadaVoz()">📞 Chamada de Voz</button>
-        <button class="btn btn-secondary" style="padding: 5px 12px; font-size: 12px;" onclick="iniciarChamadaVideo()">📹 Chamada de Vídeo</button>
-      </div>
+      <span style="font-size: 14px; color: #ff9800; font-weight: bold;">💬 Chat da Comunidade</span>
     </div>
-    
-    <div id="chat-notification-container" style="padding: 0 15px; margin-top: 10px;"></div>
-
-    <video id="tela-stream-view" autoplay playsinline style="width: 100%; max-height: 220px; background: #000; border-bottom: 1px solid #333; display: none; object-fit: contain;"></video>
     <div class="chat-messages" id="chat-messages"></div>
     <div class="chat-input-area">
       <input type="text" id="chat-input" placeholder="Digite uma mensagem..." onkeypress="if(event.key === 'Enter') enviarMensagemChat()">
@@ -272,35 +217,451 @@
     </div>
   </div>
 
-  <div id="call-screen" class="call-active-container" style="display: none;">
-    <div class="call-header-info">
-      <div>
-        <h4 id="call-title" style="color: #ff9800; margin: 0;">Chamada em Andamento</h4>
-        <p id="call-timer" style="font-size: 12px; color: #aaa; margin-top: 2px;">Tempo: 00:00</p>
-      </div>
-      <button class="btn btn-danger" style="padding: 6px 14px; font-size: 13px;" onclick="encerrarChamada()">Sair da Chamada</button>
-    </div>
-    
-    <div class="participants-grid" id="participants-grid"></div>
-
-    <div class="call-controls">
-      <button class="btn btn-secondary" id="btn-toggle-mic" onclick="alternarMicrofone()">🎤 Desligar Mic</button>
-      <button class="btn btn-secondary" id="btn-toggle-cam" onclick="alternarCamera()">📹 Ligar Câmera</button>
-      <button class="btn btn-secondary" onclick="iniciarTransmissaoTela()">🖥️ Iniciar Tela</button>
-      <button class="btn btn-danger" onclick="pararTransmissaoTela()">Parar Tela</button>
-    </div>
-  </div>
-
-  <div id="modal-perfil" class="modal" onclick="fecharModalPerfil(event)">
+  <!-- Modal de Gerenciamento do Dono -->
+  <div id="modal-gerenciar" class="modal" onclick="fecharModalGerenciar(event)">
     <div class="modal-box" onclick="event.stopPropagation()">
-      <h3>Editar Perfil</h3>
-      <div class="avatar-preview-box">
-        <img id="edit-avatar-preview" class="avatar-preview" src="" alt="Avatar">
-        <label class="btn btn-upload" for="editAvatarInput">Mudar Foto</label>
-        <input type="file" id="editAvatarInput" accept="image/*" onchange="carregarPreviewAvatar(event, 'edit-avatar-preview', 'tempEdit')">
+      <h3 style="color: #ff9800; margin-bottom: 15px;">Gerenciar Comunidade</h3>
+      <div id="conteudo-gerenciamento" style="display: flex; flex-direction: column; gap: 12px; text-align: left; font-size: 13px;">
+        <!-- Preenchido Dinamicamente -->
       </div>
-      <input type="text" id="edit-username" placeholder="...">
+      <br>
+      <button class="btn btn-secondary" onclick="document.getElementById('modal-gerenciar').style.display='none'">Fechar</button>
     </div>
   </div>
+
+  <script>
+    let isRegisterMode = false;
+    let tempAvatarBase64 = "";
+    let tempGroupIconBase64 = "";
+    let tempMediaBase64 = "";
+    let currentCommunity = "";
+    let currentMode = "posts";
+    window.currentUser = null;
+
+    function toggleAuthMode() {
+      isRegisterMode = !isRegisterMode;
+      document.getElementById('auth-title').innerText = isRegisterMode ? "Cadastre-se no Fanmade Communities" : "Entrar no Fanmade Communities";
+      document.getElementById('btn-submit').innerText = isRegisterMode ? "Registrar" : "Entrar";
+      document.getElementById('auth-link-text').innerText = isRegisterMode ? "Já tem conta?" : "Não tem conta?";
+      document.getElementById('auth-link').innerText = isRegisterMode ? "Faça login" : "Cadastre-se";
+      document.getElementById('avatar-field').style.display = isRegisterMode ? "block" : "none";
+    }
+
+    function toggleSidebar() {
+      document.getElementById('sidebarComunidades').classList.toggle('active');
+      document.getElementById('sidebarOverlay').classList.toggle('active');
+    }
+
+    function carregarPreviewAvatar(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          tempAvatarBase64 = e.target.result;
+          document.getElementById('avatar-preview-img').src = tempAvatarBase64;
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function carregarPreviewGrupo(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          tempGroupIconBase64 = e.target.result;
+          document.getElementById('group-icon-preview').src = tempGroupIconBase64;
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function validarSelecaoMidia(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          tempMediaBase64 = e.target.result;
+          document.getElementById('media-nome-status').innerText = "✓ Arquivo pronto";
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function mudarAbaPainel(aba) {
+      if (aba === 'post') {
+        document.getElementById('tab-post').classList.add('active');
+        document.getElementById('tab-grupo').classList.remove('active');
+        document.getElementById('form-post').style.display = 'block';
+        document.getElementById('form-grupo').style.display = 'none';
+      } else {
+        document.getElementById('tab-grupo').classList.add('active');
+        document.getElementById('tab-post').classList.remove('active');
+        document.getElementById('form-grupo').style.display = 'block';
+        document.getElementById('form-post').style.display = 'none';
+      }
+    }
+
+    function alternarModo(modo) {
+      currentMode = modo;
+      if (modo === 'posts') {
+        document.getElementById('btn-mode-posts').className = 'btn';
+        document.getElementById('btn-mode-chat').className = 'btn btn-secondary';
+        document.getElementById('galeria').style.display = 'grid';
+        document.getElementById('chat-box').style.display = 'none';
+      } else {
+        document.getElementById('btn-mode-chat').className = 'btn';
+        document.getElementById('btn-mode-posts').className = 'btn btn-secondary';
+        document.getElementById('chat-box').style.display = 'flex';
+        document.getElementById('galeria').style.display = 'none';
+      }
+    }
+
+    // Gerenciador de IDs e Autenticação com suporte a id 0000 para roxfoxyt
+    async function handleAuth() {
+      const usernameInput = document.getElementById('username').value.trim();
+      const passwordInput = document.getElementById('password').value.trim();
+      const bioInput = document.getElementById('reg-bio') ? document.getElementById('reg-bio').value.trim() : "";
+      const msgEl = document.getElementById('auth-msg');
+
+      if (!usernameInput || !passwordInput) {
+        msgEl.style.color = '#dc3545';
+        msgEl.innerText = "Preencha todos os campos!";
+        return;
+      }
+
+      try {
+        msgEl.style.color = '#ff9800';
+        msgEl.innerText = isRegisterMode ? "Cadastrando..." : "Entrando...";
+
+        // Atribuição de ID especial para conta admin roxfoxyt
+        let assignedId = Math.floor(1000 + Math.random() * 9000).toString();
+        let isAdmin = false;
+
+        if (usernameInput.toLowerCase() === 'roxfoxyt') {
+          assignedId = '0000';
+          isAdmin = true;
+        }
+
+        window.currentUser = {
+          id: assignedId,
+          username: usernameInput,
+          bio: bioInput,
+          avatar: tempAvatarBase64 || 'https://via.placeholder.com/60/333333/FFFFFF?text=' + usernameInput.charAt(0).toUpperCase(),
+          isAdminGlobal: isAdmin
+        };
+
+        document.getElementById('auth-panel').style.display = 'none';
+        document.getElementById('upload-panel').style.display = 'block';
+        atualizarHeaderUsuario();
+        carregarDadosComunidades();
+      } catch (e) {
+        msgEl.style.color = '#dc3545';
+        msgEl.innerText = "Erro na autenticação.";
+      }
+    }
+
+    function atualizarHeaderUsuario() {
+      const header = document.getElementById('auth-header');
+      header.innerHTML = `
+        <div class="user-profile-badge">
+          <img src="${window.currentUser.avatar}" class="avatar-header" alt="Avatar">
+          <span><b>@${window.currentUser.username}</b> <small style="color:#ff9800;">(ID: ${window.currentUser.id})</small></span>
+        </div>
+        <button class="btn btn-danger" style="padding: 4px 10px; font-size: 12px;" onclick="location.reload()">Sair</button>
+      `;
+    }
+
+    // Criar Comunidade com Regras de Dono
+    async function salvarGrupo() {
+      const nome = document.getElementById('group-name').value.trim();
+      const desc = document.getElementById('group-desc').value.trim();
+      const site = document.getElementById('group-site').value.trim();
+      const isPrivate = document.getElementById('group-is-private').checked;
+      const isNsfw = document.getElementById('group-is-nsfw').checked;
+      const msgEl = document.getElementById('action-msg');
+
+      if (!nome) {
+        msgEl.style.color = '#dc3545';
+        msgEl.innerText = "Dê um nome para a comunidade!";
+        return;
+      }
+
+      const dadosGrupo = {
+        id: 'group_' + Date.now(),
+        nome: nome,
+        descricao: desc,
+        site: site,
+        isPrivate: isPrivate,
+        isNsfw: isNsfw,
+        icone: tempGroupIconBase64 || 'https://via.placeholder.com/60/333/FFFFFF?text=' + nome.charAt(0),
+        donoId: window.currentUser.id,
+        donoUsername: window.currentUser.username,
+        membros: [window.currentUser.username],
+        banidos: [],
+        cargos: {
+          [window.currentUser.username]: "Dono"
+        },
+        criadoEm: Date.now()
+      };
+
+      // Simulação de salvamento local ou Firestore
+      if(!window.mockGrupos) window.mockGrupos = [];
+      window.mockGrupos.push(dadosGrupo);
+
+      msgEl.style.color = '#28a745';
+      msgEl.innerText = "Comunidade criada com sucesso!";
+      document.getElementById('group-name').value = '';
+      document.getElementById('group-desc').value = '';
+      document.getElementById('group-site').value = '';
+      setTimeout(() => { msgEl.innerText = ""; }, 2500);
+      carregarDadosComunidades();
+    }
+
+    function carregarDadosComunidades() {
+      const listaSidebar = document.getElementById('sidebar-public-list');
+      const selectPost = document.getElementById('post-group-select');
+      const navBar = document.getElementById('communities-nav-bar');
+
+      let htmlSidebar = '';
+      let htmlSelect = '<option value="">Feed Geral</option>';
+      let htmlNav = '<div class="community-tab active" onclick="filtrarComunidade(\'\')">🔥 Feed Geral</div>';
+
+      const grupos = window.mockGrupos || [];
+      grupos.forEach(g => {
+        htmlSidebar += `
+          <div style="background:#222; padding:8px; border-radius:6px; cursor:pointer;" onclick="filtrarComunidade('${g.id}')">
+            <b>${g.nome}</b> ${g.isPrivate ? '🔒' : ''} ${g.isNsfw ? '🔞' : ''}
+          </div>
+        `;
+        htmlSelect += `<option value="${g.id}">${g.nome}</option>`;
+        htmlNav += `
+          <div class="community-tab" onclick="filtrarComunidade('${g.id}')">
+            <img src="${g.icone}" class="tab-community-avatar"> ${g.nome}
+          </div>
+        `;
+      });
+
+      listaSidebar.innerHTML = htmlSidebar || '<p style="color:#777; font-size:13px;">Nenhuma comunidade criada.</p>';
+      selectPost.innerHTML = htmlSelect;
+      navBar.innerHTML = htmlNav;
+    }
+
+    function filtrarComunidade(idGrupo) {
+      currentCommunity = idGrupo;
+      const grupos = window.mockGrupos || [];
+      const grupoObj = grupos.find(g => g.id === idGrupo);
+
+      if (grupoObj) {
+        document.getElementById('current-community-title').innerText = grupoObj.nome;
+        document.getElementById('btn-mode-chat').style.display = 'inline-block';
+        
+        // Verifica se o usuário logado é o dono ou admin global para habilitar painel de gerenciamento
+        const isDono = window.currentUser && (window.currentUser.id === grupoObj.donoId || window.currentUser.isAdminGlobal);
+        document.getElementById('btn-manage-group').style.display = isDono ? 'inline-block' : 'none';
+      } else {
+        document.getElementById('current-community-title').innerText = "Feed Geral";
+        document.getElementById('btn-mode-chat').style.display = 'none';
+        document.getElementById('btn-manage-group').style.display = 'none';
+      }
+      toggleSidebar();
+      carregarPosts();
+    }
+
+    function salvarPost() {
+      const titulo = document.getElementById('post-title').value.trim();
+      const desc = document.getElementById('post-desc').value.trim();
+      const grupoId = document.getElementById('post-group-select').value;
+      const msgEl = document.getElementById('action-msg');
+
+      if (!tempMediaBase64) {
+        msgEl.style.color = '#dc3545';
+        msgEl.innerText = "Selecione uma imagem ou vídeo para publicar!";
+        return;
+      }
+
+      if(!window.mockPosts) window.mockPosts = [];
+      window.mockPosts.unshift({
+        id: 'post_' + Date.now(),
+        grupoId: grupoId,
+        autor: window.currentUser.username,
+        autorAvatar: window.currentUser.avatar,
+        titulo: titulo,
+        descricao: desc,
+        midia: tempMediaBase64,
+        tipoMidia: tempMediaBase64.startsWith('data:video') ? 'video' : 'image',
+        criadoEm: Date.now()
+      });
+
+      msgEl.style.color = '#28a745';
+      msgEl.innerText = "Publicado com sucesso!";
+      document.getElementById('post-title').value = '';
+      document.getElementById('post-desc').value = '';
+      tempMediaBase64 = "";
+      document.getElementById('media-nome-status').innerText = "";
+      setTimeout(() => { msgEl.innerText = ""; }, 2500);
+      carregarPosts();
+    }
+
+    function carregarPosts() {
+      const galeria = document.getElementById('galeria');
+      const posts = window.mockPosts || [];
+      
+      const filtrados = posts.filter(p => p.grupoId === currentCommunity);
+      
+      let html = '';
+      filtrados.forEach(p => {
+        let elementoMidia = p.tipoMidia === 'video' ? `<video src="${p.midia}" controls></video>` : `<img src="${p.midia}" alt="Post">`;
+        html += `
+          <div class="post-card">
+            ${elementoMidia}
+            <div class="post-meta">
+              <div class="post-author-box">
+                <div class="author-info-left">
+                  <img src="${p.autorAvatar}" class="post-author-avatar">
+                  <span>@${p.autor}</span>
+                </div>
+              </div>
+              <div class="post-title">${p.titulo || ''}</div>
+              <div class="post-desc">${p.descricao || ''}</div>
+            </div>
+          </div>
+        `;
+      });
+      galeria.innerHTML = html || '<p style="color:#777; grid-column: 1/-1; text-align:center;">Nenhuma publicação encontrada.</p>';
+    }
+
+    // Funcionalidades de Gerenciamento do Dono (Cargos, Privado, +18, Banir, Transferir Posse, Excluir)
+    function abrirPainelGerenciamento() {
+      const grupos = window.mockGrupos || [];
+      const grupoObj = grupos.find(g => g.id === currentCommunity);
+      if (!grupoObj) return;
+
+      const container = document.getElementById('conteudo-gerenciamento');
+      container.innerHTML = `
+        <label>Nome da Comunidade: <input type="text" id="edit-g-name" value="${grupoObj.nome}"></label>
+        <label>Descrição: <textarea id="edit-g-desc">${grupoObj.descricao || ''}</textarea></label>
+        <label>Link / Site: <input type="text" id="edit-g-site" value="${grupoObj.site || ''}"></label>
+        <label><input type="checkbox" id="edit-g-private" ${grupoObj.isPrivate ? 'checked' : ''}> Comunidade Privada</label>
+        <label><input type="checkbox" id="edit-g-nsfw" ${grupoObj.isNsfw ? 'checked' : ''}> Conteúdo +18</label>
+        <hr style="border-color:#333;">
+        <p><b>Membros e Cargos:</b></p>
+        <div style="max-height: 120px; overflow-y:auto; display:flex; flex-direction:column; gap:6px;">
+          ${grupoObj.membros.map(m => `
+            <div style="display:flex; justify-content:space-between; align-items:center; background:#252525; padding:6px; border-radius:4px;">
+              <span>@${m} (${grupoObj.cargos[m] || 'Membro'})</span>
+              <div style="display:flex; gap:4px;">
+                <button class="btn btn-secondary" style="padding:2px 6px; font-size:10px;" onclick="alterarCargoGrupo('${grupoObj.id}', '${m}')">Cargo</button>
+                <button class="btn btn-danger" style="padding:2px 6px; font-size:10px;" onclick="banirMembroGrupo('${grupoObj.id}', '${m}')">Banir</button>
+                <button class="btn btn-secondary" style="padding:2px 6px; font-size:10px; background:#6c757d;" onclick="transferirPosseGrupo('${grupoObj.id}', '${m}')">Posse</button>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+        <br>
+        <button class="btn" onclick="salvarEdicaoGrupo('${grupoObj.id}')">Salvar Alterações</button>
+        <button class="btn btn-danger" onclick="excluirComunidade('${grupoObj.id}')">Excluir Comunidade</button>
+      `;
+      document.getElementById('modal-gerenciar').style.display = 'flex';
+    }
+
+    function fecharModalGerenciar(e) {
+      if(e.target.id === 'modal-gerenciar') {
+        document.getElementById('modal-gerenciar').style.display = 'none';
+      }
+    }
+
+    function salvarEdicaoGrupo(id) {
+      const grupos = window.mockGrupos || [];
+      const idx = grupos.findIndex(g => g.id === id);
+      if(idx !== -1) {
+        grupos[idx].nome = document.getElementById('edit-g-name').value;
+        grupos[idx].descricao = document.getElementById('edit-g-desc').value;
+        grupos[idx].site = document.getElementById('edit-g-site').value;
+        grupos[idx].isPrivate = document.getElementById('edit-g-private').checked;
+        grupos[idx].isNsfw = document.getElementById('edit-g-nsfw').checked;
+        alert("Comunidade atualizada com sucesso!");
+        document.getElementById('modal-gerenciar').style.display = 'none';
+        filtrarComunidade(id);
+      }
+    }
+
+    function excluirComunidade(id) {
+      if(confirm("Tem certeza que deseja excluir esta comunidade permanentemente?")) {
+        window.mockGrupos = window.mockGrupos.filter(g => g.id !== id);
+        document.getElementById('modal-gerenciar').style.display = 'none';
+        filtrarComunidade('');
+      }
+    }
+
+    function banirMembroGrupo(idGrupo, membro) {
+      if(confirm(`Expulsar e banir @${membro} desta comunidade?`)) {
+        const grupo = window.mockGrupos.find(g => g.id === idGrupo);
+        if(grupo) {
+          grupo.membros = grupo.membros.filter(m => m !== membro);
+          grupo.banidos.push(membro);
+          alert(`@${membro} foi banido.`);
+          abrirPainelGerenciamento();
+        }
+      }
+    }
+
+    function transferirPosseGrupo(idGrupo, novoDono) {
+      if(confirm(`Passar a posse total desta comunidade para @${novoDono}?`)) {
+        const grupo = window.mockGrupos.find(g => g.id === idGrupo);
+        if(grupo) {
+          grupo.donoUsername = novoDono;
+          grupo.cargos[novoDono] = "Dono";
+          alert("Posse transferida com sucesso!");
+          document.getElementById('modal-gerenciar').style.display = 'none';
+        }
+      }
+    }
+
+    function alterarCargoGrupo(idGrupo, membro) {
+      const novoCargo = prompt(`Definir cargo para @${membro} (ex: Admin, Moderador, Membro):`, "Moderador");
+      if(novoCargo) {
+        const grupo = window.mockGrupos.find(g => g.id === idGrupo);
+        if(grupo) {
+          grupo.cargos[membro] = novoCargo;
+          alert("Cargo atualizado!");
+          abrirPainelGerenciamento();
+        }
+      }
+    }
+
+    function enviarMensagemChat() {
+      const input = document.getElementById('chat-input');
+      const texto = input.value.trim();
+      if(!texto) return;
+
+      if(!window.mockChat) window.mockChat = [];
+      window.mockChat.push({
+        grupoId: currentCommunity,
+        autor: window.currentUser.username,
+        texto: texto,
+        criadoEm: Date.now()
+      });
+      input.value = '';
+      carregarMensagensChat();
+    }
+
+    function carregarMensagensChat() {
+      const container = document.getElementById('chat-messages');
+      const mensagens = window.mockChat || [];
+      const filtradas = mensagens.filter(m => m.grupoId === currentCommunity);
+
+      let html = '';
+      filtradas.forEach(m => {
+        const isMe = m.autor === window.currentUser.username;
+        html += `<div class="chat-msg ${isMe ? 'me' : ''}"><b>@${m.autor}:</b> ${m.texto}</div>`;
+      });
+      container.innerHTML = html || '<p style="color:#777; text-align:center;">Nenhuma mensagem no chat ainda.</p>';
+    }
+
+    setInterval(() => {
+      if(currentMode === 'chat') carregarMensagensChat();
+    }, 2000);
+  </script>
 </body>
 </html>
